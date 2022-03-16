@@ -26,6 +26,8 @@ public class ScreenManagerScript : MonoBehaviour
     [SerializeField]
     CanvasObjectScript activeUI;
 
+    PauseControl pauseControl;
+
     void Awake()
     {
         uis = new Dictionary<string, CanvasObjectScript>();
@@ -34,18 +36,31 @@ public class ScreenManagerScript : MonoBehaviour
         {
             isLevel = true;
         }
+
+        pauseControl = new PauseControl();
     }
 
     // Start is called before the first frame update
     void Start()
     {
         startingUI.EnableUI();
+        StartCoroutine(Load());
     }
 
     // Update is called once per frame
     void Update()
     {
         
+    }
+
+    IEnumerator Load()
+    {
+        while(gameManager == null)
+        {
+            yield return new WaitForFixedUpdate(); 
+        }
+
+        sceneName = gameManager.GetCurrentSceneName();
     }
 
     public void GoToMenu(string ui)
@@ -66,35 +81,60 @@ public class ScreenManagerScript : MonoBehaviour
                     gameManager.GoToScene("SettingsScene");
                     break;
 
-                case "PauseMenu":
-
-                    break;
-
-                case "SettingsMenu":
-
-                    break;
-
-                case "VictoryMenu":
-
-                    break;
-
                 case "Level_tutorial_1":
                     gameManager.GoToScene("Level_tutorial_1");
                     break;
 
                 case "Level_tutorial_2":
-                    gameManager.GoToScene("Level_tutorial_2");
+                    //gameManager.GoToScene("Level_tutorial_2");
                     break;
 
                 case "Level_tutorial_3":
-                    gameManager.GoToScene("Level_tutorial_3");
+                    //gameManager.GoToScene("Level_tutorial_3");
                     break;
 
                 case "Level_tutorial_4":
-                    gameManager.GoToScene("Level_tutorial_4");
+                    //gameManager.GoToScene("Level_tutorial_4");
                     break;
 
-                case "QuitApplication":
+                case "PauseMenu":
+                    if (!pauseControl.IsGamePaused())
+                    {
+                        PauseLevel();
+                        DisableUI("SettingsMenu");
+                        EnableUI("PauseMenu");
+                    }
+                    break;
+
+                case "SettingsMenu":
+                    DisableUI("PauseMenu");
+                    EnableUI("SettingsMenu");
+                    break;
+
+                case "VictoryMenu":
+                    PauseLevel();
+                    EnableUI("VictoryMenu");
+                    break;
+
+                case "FailStateMenu":
+                    PauseLevel();
+                    EnableUI("FailStateMenu");
+                    break;
+
+                case "ResumeLevel":
+                    DisableUI("PauseMenu");
+                    ResumeLevel();
+                    break;
+
+                case "RestartLevel":
+                    gameManager.GoToScene(sceneName);
+                    break;
+
+                case "NextLevel":
+                    // For now use the scene name directly
+                    break;
+
+                case "QuitGame":
                     gameManager.QuitGame();
                     break;
 
@@ -102,7 +142,7 @@ public class ScreenManagerScript : MonoBehaviour
                     gameManager.ExitPreloadScene();
                     break;
 
-                case "":
+                case "": // Copy and paste dummy
 
                     break;
 
@@ -110,6 +150,32 @@ public class ScreenManagerScript : MonoBehaviour
                     break;
             }
         }
+    }
+
+    private void EnableUI(string uiName)
+    {
+        if(uis.TryGetValue(uiName, out CanvasObjectScript coScript))
+        {
+            coScript.EnableUI();
+        }
+    }
+
+    private void DisableUI(string uiName)
+    {
+        if(uis.TryGetValue(uiName, out CanvasObjectScript coScript))
+        {
+            coScript.DisableUI();
+        }
+    }
+
+    public void PauseLevel()
+    {
+        pauseControl.PauseGame();
+    }
+
+    public void ResumeLevel()
+    {
+        pauseControl.ResumeGame();
     }
 
     //public void RequestUI(MenuUI ui)

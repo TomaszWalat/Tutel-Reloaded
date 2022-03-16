@@ -6,29 +6,50 @@ public class LevelManagerScript : GoalObjectScript
 {
     // Script for level/gameplay related stuff
 
-    private enum LevelState { Loading, Ready, InProgress, Paused, Complete }
+    public enum LevelState { Loading, Ready, InProgress, Paused, Failed, Complete }
+
+    [SerializeField]
+    ScreenManagerScript screenManager;
 
     [SerializeField]
     LevelState state = LevelState.Loading;
 
-    [SerializeField]
-    bool levelLoaded;
-
-
-    [SerializeField]
-    bool levelComplete;
+    bool isPaused;
 
     // Start is called before the first frame update
     void Start()
     {
-
-
+        StartCoroutine(Load());
+        isPaused = false;
+       // state = LevelState.Loading;
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
-        
+        if (Input.GetKeyDown(KeyCode.P))
+        {
+            //if (state == LevelState.InProgress || state == LevelState.Ready)
+            //{
+            //    state = LevelState.Paused;
+            //    screenManager.GoToMenu("PauseMenu");
+            //}
+            //else if(state == LevelState.Paused)
+            //{
+            //    state = LevelState.InProgress;
+            //    screenManager.GoToMenu("ResumeLevel");
+            //} 
+            if (!isPaused)
+            {
+                isPaused = true;
+                screenManager.GoToMenu("PauseMenu");
+            }
+            else if(isPaused)
+            {
+                screenManager.GoToMenu("ResumeLevel");
+                isPaused = false;
+            }
+        }
     }
 
     public string GetState()
@@ -102,6 +123,15 @@ public class LevelManagerScript : GoalObjectScript
             isComplete = childrenComplete;
 
             state = LevelState.Complete;
+
+            screenManager.GoToMenu("VictoryMenu");
         }
+    }
+
+    public void TriggerFailState()
+    {
+        state = LevelState.Failed;
+
+        screenManager.GoToMenu("FailStateMenu");
     }
 }
