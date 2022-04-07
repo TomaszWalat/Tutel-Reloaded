@@ -294,6 +294,8 @@ public class GameManagerScript : MonoBehaviour
 
         yield return new WaitForSeconds(transitionTime);
 
+        //CHECK TRANSITION!
+        transition = GameObject.Find("FadeBox").GetComponent<Animator>();
         transition.SetTrigger("Fade_In"); // Fade from black
 
         isLoadingScene = false;
@@ -344,6 +346,8 @@ public class GameManagerScript : MonoBehaviour
 
             yield return new WaitForSeconds(transitionTime);
 
+            //CHECK TRANSITION!
+            transition = GameObject.Find("FadeBox").GetComponent<Animator>();
             transition.SetTrigger("Fade_In"); // Fade from black
 
             isLoadingScene = false;
@@ -399,9 +403,11 @@ public class GameManagerScript : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
+        //CHECK TRANSITION!
         GameObject screenManagerObject = GameObject.Find("ScreenManager");
+        transition = GameObject.Find("FadeBox").GetComponent<Animator>();
 
-        if(screenManagerObject != null)
+        if (screenManagerObject != null)
         {
             if(screenManagerObject.TryGetComponent(out ScreenManagerScript smScript))
             {
