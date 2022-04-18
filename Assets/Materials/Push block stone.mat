@@ -132,11 +132,11 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - MossAmount: 0.0093
-    - MossCellTransparency: 0
-    - MossDensity: 5
+    - MossAmount: 0.0064
+    - MossCellTransparency: 0.1
+    - MossDensity: 20
     - MossSlimness: 5
-    - MossTotalTransparency: 0.083
+    - MossTotalTransparency: 0.347
     - _AORemapMax: 1
     - _AORemapMin: 0
     - _ATDistance: 1
@@ -249,9 +249,12 @@ Material:
     - _ZTestGBuffer: 4
     - _ZTestTransparent: 4
     - _ZWrite: 1
+    - x: 1
+    - y: 2
+    - z: 3
     m_Colors:
-    - MossColor: {r: 0.14814818, g: 1, b: 0, a: 0}
-    - StoneColor: {r: 0.4245283, g: 0.4245283, b: 0.4245283, a: 0}
+    - MossColor: {r: 0.14901948, g: 1, b: 0, a: 1}
+    - StoneColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
     - _BaseColorMap_MipInfo: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
