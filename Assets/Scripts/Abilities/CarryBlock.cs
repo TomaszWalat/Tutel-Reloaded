@@ -55,8 +55,8 @@ public class CarryBlock : Ability
                 //Moves the green gizmo sphere to where the raycast hit
                 grabPoint = hit.point;
 
-                //Checks if player is carrying anythign then if the block hit has the correct tag
-                if (currentlyCarrying == false)
+                //Checks if player is carrying anything then if the block hit has the correct tag
+                if (!currentlyCarrying && hit.transform.gameObject.tag == "carryBlock")
                 {
                     childName = hit.transform.gameObject.name;
                     Debug.Log(childName);
@@ -77,7 +77,7 @@ public class CarryBlock : Ability
                 }
             }
             //The raycast hit nothing so now it runs a box cast to check if the area in front is clear to drop the block. The area is the same size as the carry block
-            else if(currentlyCarrying == true)
+            else if(currentlyCarrying)
             {
                 RaycastHit radiusHit;
                 if (Physics.BoxCast(transform.position, checkBoxSize, transform.forward, out radiusHit, transform.rotation, grabRange))
