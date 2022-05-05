@@ -57,9 +57,9 @@ public class TurtleController : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        mainCam = Camera.main;
         controller = this.GetComponent<CharacterController>();
-        groundCheck = gameObject.transform.Find("groundCheck").transform;     
+        groundCheck = gameObject.transform.Find("groundCheck").transform;
+        //mainCam = Camera.main;     
     }
 
     // Update is called once per frame

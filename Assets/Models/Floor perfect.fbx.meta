@@ -8,7 +8,7 @@ ModelImporter:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
       name: Moss
-    second: {fileID: 2100000, guid: ae10bcc95768c3342b3bd1ce8b35bb3e, type: 2}
+    second: {fileID: -5186266747319645695, guid: 95590fb1d19189e4fb8257d41d0c14e4, type: 3}
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule

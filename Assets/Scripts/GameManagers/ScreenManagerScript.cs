@@ -86,15 +86,15 @@ public class ScreenManagerScript : MonoBehaviour
                     break;
 
                 case "Level_tutorial_2":
-                    //gameManager.GoToScene("Level_tutorial_2");
+                    gameManager.GoToScene("Level_tutorial_2");
                     break;
 
                 case "Level_tutorial_3":
-                    //gameManager.GoToScene("Level_tutorial_3");
+                    gameManager.GoToScene("Level_tutorial_3");
                     break;
 
                 case "Level_tutorial_4":
-                    //gameManager.GoToScene("Level_tutorial_4");
+                    gameManager.GoToScene("Level_tutorial_4");
                     break;
 
                 case "PauseMenu":
