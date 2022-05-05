@@ -16,19 +16,23 @@ public class LevelManagerScript : GoalObjectScript
 
     bool isPaused;
 
+    private bool isHoldingP;
+
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(Load());
         isPaused = false;
-       // state = LevelState.Loading;
+        isHoldingP = false;
+        // state = LevelState.Loading;
     }
 
     // Update is called once per frame
     void FixedUpdate()
     {
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) && !isHoldingP)
         {
+            isHoldingP = true;
             //if (state == LevelState.InProgress || state == LevelState.Ready)
             //{
             //    state = LevelState.Paused;
@@ -49,6 +53,11 @@ public class LevelManagerScript : GoalObjectScript
                 screenManager.GoToMenu("ResumeLevel");
                 isPaused = false;
             }
+        }
+
+        if (Input.GetKeyUp(KeyCode.P))
+        {
+            isHoldingP = false;
         }
     }
 
@@ -89,11 +98,17 @@ public class LevelManagerScript : GoalObjectScript
         state = LevelState.Ready;
     }
 
+    public void TriggerFailState()
+    {
+        state = LevelState.Failed;
+
+        screenManager.GoToMenu("FailStateMenu");
+    }
 
     // ---------- Methods from GoalObjectScript ---------- //
 
     // Only works if goal is not a parent
-    new async void SetGoalState(bool complete)
+    public override void SetGoalState(bool complete)
     {
         if (children.Count <= 0)
         {
@@ -105,8 +120,10 @@ public class LevelManagerScript : GoalObjectScript
         }
     }
 
-    new async void CheckProgress()
+    protected override async void CheckProgress()
     {
+        Debug.Log("This is: " + gameObject.name + " - CheckProgress() in LevelManagerScript entered.");
+
         bool childrenComplete = true;
 
         // Check children status
@@ -124,14 +141,10 @@ public class LevelManagerScript : GoalObjectScript
 
             state = LevelState.Complete;
 
-            screenManager.GoToMenu("VictoryMenu");
+            if (isComplete)
+            {
+                screenManager.GoToMenu("VictoryMenu");
+            }
         }
-    }
-
-    public void TriggerFailState()
-    {
-        state = LevelState.Failed;
-
-        screenManager.GoToMenu("FailStateMenu");
     }
 }

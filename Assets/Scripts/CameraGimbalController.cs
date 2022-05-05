@@ -177,13 +177,23 @@ public class CameraGimbalController : MonoBehaviour
         float x = Input.GetAxis("CamHorizontal");
         float y = Input.GetAxis("CamVertical");
         */
-        RotateBy(y * rotationSpeedY, x * rotationSpeedX);
+        if (x <= -0.1f || 0.1f <= x)
+        {
+            RotateBy(0.0f, x * rotationSpeedX);
+        }
+        if (y <= -0.1f || 0.1f <= y)
+        {
+            RotateBy(y * rotationSpeedY, 0.0f);
+        }
 
         // --- The Updateradius is a pc only feature --- //
 
         float z = Input.GetAxis("Mouse ScrollWheel");
 
-        UpdateRadius(0.1f * z);
+        if (z <= 0.0f || 0.0f <= z)
+        {
+            UpdateRadius(z * 10);
+        }
         /*
         // --- Input detection --- //
         // Temporary - final build should handle input better
@@ -278,8 +288,8 @@ public class CameraGimbalController : MonoBehaviour
             m_transform.RotateAround(anchorPoint.transform.position, m_transform.right, xAxisAngleDelta * smoothing * Time.deltaTime);
         }
 
-        //// reset gimbal's z rotation - sometimes erroneously altered by RotateAround()
-        // m_transform.rotation = Quaternion.Euler(m_transform.eulerAngles.x, m_transform.eulerAngles.y, 0.0f);
+        // reset gimbal's z rotation - sometimes erroneously altered by RotateAround()
+        m_transform.rotation = Quaternion.Euler(m_transform.eulerAngles.x, m_transform.eulerAngles.y, 0.0f);
     }
 
     /// <summary>
