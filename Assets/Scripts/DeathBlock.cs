@@ -23,6 +23,7 @@ public class DeathBlock : MonoBehaviour
     {
         if (other.gameObject.tag == "Player")
         {
+            Debug.Log("Killing player");
             levelManger.TriggerFailState();
         }
     }

@@ -256,24 +256,28 @@ public class GameManagerScript : MonoBehaviour
 
         if(!isLoadingScene)
         {
-            if (!(loadedScenes.Contains(sceneName)))
+            if(sceneName == currentSceneName)
+            {
+                Time.timeScale = 1.0f;
+
+                isLoadingScene = true;
+                
+                StartCoroutine(ReloadScene());
+
+                success = true;
+            }
+            else if (!(loadedScenes.Contains(sceneName)))
             {
                 if (sceneName != currentScene.name)
                 {
-                    isLoadingScene = true;
+                    Time.timeScale = 1.0f;
 
+                    isLoadingScene = true;
+                    
                     StartCoroutine(ChangeToScene(sceneName));
 
                     success = true;
                 }
-            }
-            else if(sceneName == currentSceneName)
-            {
-                isLoadingScene = true;
-
-                StartCoroutine(ReloadScene());
-
-                success = true;
             }
         }
 
@@ -282,19 +286,53 @@ public class GameManagerScript : MonoBehaviour
 
     IEnumerator ReloadScene()
     {
+        Debug.Log("Reloading scene 1");
+
         yield return new WaitForEndOfFrame();
 
-        transition.SetTrigger("Fade_Out"); // Fade to black
+        Debug.Log("Reloading scene 2");
 
-        yield return new WaitForSeconds(transitionTime);
+        transition.SetTrigger("Fade_Out"); // Fade to black
+        
+        Debug.Log("Reloading scene 3");
+
+        Time.timeScale = 1.0f;
+
+        //yield return new WaitForSeconds(transitionTime);
+        
+        Debug.Log("Reloading scene 4");
+
+        //SceneManager.UnloadSceneAsync(currentSceneName);
+
+        //Debug.Log("Reloading scene 5");
+
+        //SceneManager.LoadScene("_reload");
+
+        //Debug.Log("Reloading scene 6");
+        
+        //yield return new WaitForSeconds(transitionTime);
+
+        //Debug.Log("Reloading scene 7");
 
         SceneManager.LoadScene(currentSceneName);
 
+        Debug.Log("Reloading scene 8");
+        
+        yield return new WaitForSeconds(transitionTime);
+        
+        Debug.Log("Reloading scene 10");
+
         currentScene = SceneManager.GetActiveScene();
 
+        Debug.Log("Reloading scene 11");
+
         yield return new WaitForSeconds(transitionTime);
+        
+        Debug.Log("Reloading scene 12");
 
         transition.SetTrigger("Fade_In"); // Fade from black
+        
+        Debug.Log("Reloading scene 13");
 
         isLoadingScene = false;
     }
@@ -302,9 +340,12 @@ public class GameManagerScript : MonoBehaviour
     // Changes what scene is active
     IEnumerator ChangeToScene(string sceneName)
     {
+        Time.timeScale = 1.0f;
+
         StartCoroutine(LoadSceneInBackground(sceneName));
 
         yield return new WaitForEndOfFrame();
+
 
         while(partloadedScene.progress < 0.9f)
         {
@@ -380,15 +421,19 @@ public class GameManagerScript : MonoBehaviour
 
     IEnumerator UnloadLoadSceneInBackground(string sceneName)
     {
-        AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(sceneName, UnloadSceneOptions.None);
+        //if (sceneName != "_reload")
+        //{
+            //Debug.LogFormat("scene name: ~{0}~", sceneName);
+            AsyncOperation asyncUnload = SceneManager.UnloadSceneAsync(sceneName, UnloadSceneOptions.None);
 
-        while (!asyncUnload.isDone)
-        {
+            while (!asyncUnload.isDone)
+            {
 
-            yield return new WaitForEndOfFrame();
-        }
+                yield return new WaitForEndOfFrame();
+            }
 
-        // Can execute more after scene is unloaded if needed
+            // Can execute more after scene is unloaded if needed
+        //}
     }
 
     IEnumerator FindScreenManager()
@@ -408,6 +453,8 @@ public class GameManagerScript : MonoBehaviour
                 currentScreenManager = smScript;
 
                 currentScreenManager.AttachGameManager(this);
+
+                //currentScreenManager.ResumeLevel();
             }
         }
     }
@@ -443,7 +490,11 @@ public class GameManagerScript : MonoBehaviour
                 sceneStack.Push(current.name);
             }
 
-            StartCoroutine(UnloadLoadSceneInBackground(current.name));
+            if (current.IsValid())
+            {
+                Debug.LogFormat("current scene name: ~{0}~", current.name);
+                StartCoroutine(UnloadLoadSceneInBackground(current.name));
+            }
         }
 
         StartCoroutine(FindScreenManager());

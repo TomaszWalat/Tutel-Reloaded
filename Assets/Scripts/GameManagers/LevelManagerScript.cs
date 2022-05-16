@@ -18,6 +18,12 @@ public class LevelManagerScript : GoalObjectScript
 
     private bool isHoldingP;
 
+    PauseControl pauseControl;
+
+    //void Awake()
+    //{
+    //}
+
     // Start is called before the first frame update
     void Start()
     {
@@ -25,6 +31,7 @@ public class LevelManagerScript : GoalObjectScript
         isPaused = false;
         isHoldingP = false;
         // state = LevelState.Loading;
+        pauseControl = new PauseControl();
     }
 
     // Update is called once per frame
@@ -45,13 +52,17 @@ public class LevelManagerScript : GoalObjectScript
             //} 
             if (!isPaused)
             {
-                isPaused = true;
+                //isPaused = true;
                 screenManager.GoToMenu("PauseMenu");
+                Pause();
+                //Time.timeScale = 0.0f;
             }
             else if(isPaused)
             {
+                Resume();
                 screenManager.GoToMenu("ResumeLevel");
-                isPaused = false;
+                //isPaused = false;
+                //Time.timeScale = 1.0f;
             }
         }
 
@@ -88,6 +99,11 @@ public class LevelManagerScript : GoalObjectScript
         return sState;
     }
 
+    public bool IsGamePaused()
+    {
+        return isPaused;
+    }
+
     IEnumerator Load()
     {
         // Initialise everything with the level here
@@ -96,13 +112,30 @@ public class LevelManagerScript : GoalObjectScript
         yield return new WaitForEndOfFrame();
 
         state = LevelState.Ready;
+        //Time.timeScale = 1.0f;
+    }
+
+    public void Pause()
+    {
+        isPaused = true;
+        state = LevelState.Paused;
+        pauseControl.PauseGame();
+    }
+
+    public void Resume()
+    {
+        pauseControl.ResumeGame();
+        state = LevelState.InProgress;
+        isPaused = false;
     }
 
     public void TriggerFailState()
     {
+        isPaused = true;
         state = LevelState.Failed;
-
         screenManager.GoToMenu("FailStateMenu");
+        pauseControl.PauseGame();
+        //Time.timeScale = 0.0f;
     }
 
     // ---------- Methods from GoalObjectScript ---------- //
@@ -144,6 +177,7 @@ public class LevelManagerScript : GoalObjectScript
             if (isComplete)
             {
                 screenManager.GoToMenu("VictoryMenu");
+                //Time.timeScale = 0.0f;
             }
         }
     }

@@ -26,7 +26,7 @@ public class ScreenManagerScript : MonoBehaviour
     [SerializeField]
     CanvasObjectScript activeUI;
 
-    PauseControl pauseControl;
+    //PauseControl pauseControl;
 
     void Awake()
     {
@@ -37,7 +37,7 @@ public class ScreenManagerScript : MonoBehaviour
             isLevel = true;
         }
 
-        pauseControl = new PauseControl();
+        //pauseControl = new PauseControl();
     }
 
     // Start is called before the first frame update
@@ -81,6 +81,10 @@ public class ScreenManagerScript : MonoBehaviour
                     gameManager.GoToScene("SettingsScene");
                     break;
 
+                case "Level_tutorial_0":
+                    gameManager.GoToScene("Level_tutorial_0");
+                    break;
+
                 case "Level_tutorial_1":
                     gameManager.GoToScene("Level_tutorial_1");
                     break;
@@ -98,11 +102,12 @@ public class ScreenManagerScript : MonoBehaviour
                     break;
 
                 case "PauseMenu":
-                    if (!pauseControl.IsGamePaused())
+                    if (!levelManager.IsGamePaused())//!pauseControl.IsGamePaused())
                     {
-                        PauseLevel();
+                        //PauseLevel();
                         DisableUI("SettingsMenu");
                         EnableUI("PauseMenu");
+                        //levelManager.Pause();
                     }
                     break;
 
@@ -112,22 +117,28 @@ public class ScreenManagerScript : MonoBehaviour
                     break;
 
                 case "VictoryMenu":
-                    PauseLevel();
+                    //PauseLevel();
                     EnableUI("VictoryMenu");
+                    levelManager.Pause();
                     break;
 
                 case "FailStateMenu":
-                    PauseLevel();
+                    //PauseLevel();
                     EnableUI("FailStateMenu");
+                    //levelManager.Pause();
                     break;
 
                 case "ResumeLevel":
                     DisableUI("PauseMenu");
-                    ResumeLevel();
+                    //ResumeLevel();
+                    levelManager.Resume();
                     break;
 
                 case "RestartLevel":
+                    //levelManager.Resume();
                     gameManager.GoToScene(sceneName);
+                    //levelManager.Resume();
+                    //ResumeLevel();
                     break;
 
                 case "NextLevel":
@@ -168,15 +179,16 @@ public class ScreenManagerScript : MonoBehaviour
         }
     }
 
-    public void PauseLevel()
-    {
-        pauseControl.PauseGame();
-    }
+    //public void PauseLevel()
+    //{
+    //    pauseControl.PauseGame();
+    //}
 
-    public void ResumeLevel()
-    {
-        pauseControl.ResumeGame();
-    }
+    //public void ResumeLevel()
+    //{
+    //    pauseControl.ResumeGame();
+    //    levelManager.Resume();
+    //}
 
     //public void RequestUI(MenuUI ui)
     //{
