@@ -27,28 +27,61 @@ public class WaterBuoyancy : MonoBehaviour
 
     void OnTriggerStay(Collider other)
     {
+        var swimmingScript = other.gameObject.GetComponentInChildren(typeof(Swimming)) as Swimming;
 
-        if (other.gameObject.TryGetComponent(out Swimming swimmingScript))
+        if (swimmingScript != null)
         {
-            swimmingScript.SwitchState(true);
+            //if (other.gameObject.TryGetComponent(out TurtleController turtleController))
+            //{
+            //    turtleController.useGravity = false;
+
+            //    //other.gameObject.GetComponent<Rigidbody>().isKinematic = false;
+            //}
+
+            Debug.LogFormat("object in water: {0}", other);
+
+            //swimmingScript.SwitchState(true);
 
             pointDepth = (transform.position.y + surfaceOffset) - other.transform.position.y;
-            //Debug.Log("depth: " + pointDepth);
+
+            Debug.Log("depth: " + pointDepth);
+
             if (pointDepth > 0)
             {
                 //Debug.Log("depth: " + pointDepth);
-                other.attachedRigidbody.AddForce(Vector3.up * waterBuoyancyFactor * pointDepth, ForceMode.Force);
+
+                //other.gameObject.GetComponent<Rigidbody>().AddForce(Vector3.up * waterBuoyancyFactor * pointDepth, ForceMode.Force);
+                //other.attachedRigidbody.AddForce(Vector3.up * waterBuoyancyFactor * pointDepth, ForceMode.Force);
+
+                if (other.gameObject.TryGetComponent(out CharacterController controller))
+                {
+                    controller.Move(Vector3.up * waterBuoyancyFactor * pointDepth * Time.deltaTime);
+                    //other.gameObject.transform.position += Vector3.up * 10;
+                }
             }
+
             //other.attachedRigidbody.AddForceAtPosition(Vector3.up * 10.0f, other.);
+
         }
 
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out Swimming swimmingScript))
+        var swimmingScript = other.gameObject.GetComponentInChildren(typeof(Swimming)) as Swimming;
+
+        if (swimmingScript != null)
         {
-            swimmingScript.SwitchState(false);
+
+            //if (other.gameObject.TryGetComponent(out TurtleController turtleController))
+            //{
+            //    //other.gameObject.GetComponent<Rigidbody>().isKinematic = true;
+
+            //    turtleController.useGravity = true;
+            //}
+
+            //swimmingScript.SwitchState(false);
+
             pointDepth = -100.0f;
         }
     }

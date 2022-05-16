@@ -63,16 +63,16 @@ public class TurtleController : MonoBehaviour
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
         isGrounded = Physics.CheckSphere(groundCheck.position, groundDistance, groundMask);
 
-        if(isGrounded && velocity.y < 0)
-        {
-            velocity.y = -groundAttraction;
-        }
+        //if(isGrounded && velocity.y < 0)
+        //{
+        //    velocity.y = -groundAttraction;
+        //}
 
-        if (currentlyActive) // we want the player to only move while its the selected turtle
+        if (currentlyActive) // we want the player to only move while it's the selected turtle
         {
             float x = Input.GetAxis("Horizontal");
             float z = Input.GetAxis("Vertical");
@@ -80,11 +80,11 @@ public class TurtleController : MonoBehaviour
             Move(x, z);
             CheckLastDirection(x, z);
 
-            //jumping logic
-            if (Input.GetButtonDown("Jump") && isGrounded)
-            {
-                velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravityMul * -9.81f);
-            }
+            ////jumping logic
+            //if (Input.GetButtonDown("Jump") && isGrounded)
+            //{
+            //    velocity.y = Mathf.Sqrt(jumpHeight * -2f * gravityMul * -9.81f);
+            //}
         }
         //the rotation of the character should go on even after a switch
         RotateToDirection();
@@ -93,14 +93,14 @@ public class TurtleController : MonoBehaviour
         if (useGravity)
         {
             velocity.y += gravityMul * -9.81f * Time.deltaTime;
+            //velocity.y += -9.81f * Time.deltaTime;
+            //velocity.y += Mathf.Lerp(gravityMul * -9.81f * Time.deltaTime);
         }
 
         //after all calculations, we move the player object.
         controller.Move(velocity * Time.deltaTime);
-        
+
     }
-
-
 
     void CheckLastDirection(float x, float z)
     {
@@ -214,27 +214,29 @@ public class TurtleController : MonoBehaviour
     {
         //calculate the resulting vector of the axis
         Vector3 move = transform.right * x + transform.forward * z;
-        
-        if(snapMovement)
-        { move.Normalize(); }
+
+        if (snapMovement)
+        {
+            move.Normalize();
+        }
 
         //depending on result of CameraFacing, rotate them.
         switch(CameraFacing())
         {
             case 0: //camera is facing north (-x)
-                Debug.Log("facing North -x");
+                //Debug.Log("facing North -x");
                 move = Quaternion.AngleAxis(-90, Vector3.up) * move;
                 break;
             case 1: //camera is facing East (+z)
-                Debug.Log("facing East +z");
+                //Debug.Log("facing East +z");
                 //the movement script is made to work on this axis.
                 break;
             case 2: //camera is facing South (+x)
-                Debug.Log("facing South +x");
+                //Debug.Log("facing South +x");
                 move = Quaternion.AngleAxis(90, Vector3.up) * move;
                 break;
             case 3: // camera is facing West (-z)
-                Debug.Log("facing West -z");
+                //Debug.Log("facing West -z");
                 move = Quaternion.AngleAxis(180, Vector3.up) * move;
                 break;
         }
