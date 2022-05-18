@@ -43,53 +43,55 @@ public class Climbing : Ability
         //Checks if the action button from the input manager is hit (Default should be E or A on a controller)
         if (Input.GetButtonDown("action button"))
         {
-            if (!climbing)
+            if (turtCont.currentlyActive)
             {
-                var ray = new Ray(transform.position + offset, transform.forward);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, grabRange))
+                if (!climbing)
                 {
-                    if (hit.transform.gameObject.tag == "climbable")
+                    var ray = new Ray(transform.position + offset, transform.forward);
+                    RaycastHit hit;
+                    if (Physics.Raycast(ray, out hit, grabRange))
                     {
-                        //Moves the green gizmo sphere to where the raycast hit
-                        collision = hit.point;
+                        if (hit.transform.gameObject.tag == "climbable")
+                        {
+                            //Moves the green gizmo sphere to where the raycast hit
+                            collision = hit.point;
 
-                        //Disables the character controller, sets its colission to the ClimbingPLayer
-                        transform.parent.gameObject.layer = climbPlayerLayer;
-                        turtCont.enabled = false;
-                        climbing = true;
+                            //Disables the character controller, sets its collision to the ClimbingPLayer
+                            transform.parent.gameObject.layer = climbPlayerLayer;
+                            turtCont.enabled = false;
+                            climbing = true;
 
-                        //Makes the player perpendicular to the wall in the Z axis
-                        Vector3 difference = hit.transform.position - transform.position;
-                        float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
-                        rotZ = Mathf.Round(rotZ / 90) * 90;
-                        transform.rotation = Quaternion.Euler(0f, 0f, rotZ);
+                            //Makes the player perpendicular to the wall in the Z axis
+                            Vector3 difference = hit.transform.position - transform.position;
+                            float rotZ = Mathf.Atan2(difference.y, difference.x) * Mathf.Rad2Deg;
+                            rotZ = Mathf.Round(rotZ / 90) * 90;
+                            transform.rotation = Quaternion.Euler(0f, 0f, rotZ);
 
-                        //Saves the wall transform
-                        wall = hit.transform;
+                            //Saves the wall transform
+                            wall = hit.transform;
 
+                        }
+                    }
+                }
+                else
+                {
+                    //Casts a ray downwards to check if there's ground before dropping the player off the wall
+                    var ray = new Ray(transform.parent.position, -transform.parent.up);
+                    RaycastHit hit;
+                    if (Physics.Raycast(ray, out hit, dropRange))
+                    {
+                        if (hit.transform.gameObject.layer == groundLayer)
+                        {
+                            collision = hit.point;
+
+                            //Disables the character controller, sets its collision to the Default
+                            transform.parent.gameObject.layer = defaultLayer;
+                            turtCont.enabled = true;
+                            climbing = false;
+                        }
                     }
                 }
             }
-            else
-            {
-                //Casts a ray downwards to check if there's ground before dropping the player off the wall
-                var ray = new Ray(transform.parent.position, -transform.parent.up);
-                RaycastHit hit;
-                if (Physics.Raycast(ray, out hit, dropRange))
-                {
-                    if (hit.transform.gameObject.layer == groundLayer)
-                    {
-                        collision = hit.point;
-
-                        //Disables the character controller, sets its collision to the Default
-                        transform.parent.gameObject.layer = defaultLayer;
-                        turtCont.enabled = true;
-                        climbing = false;
-                    }
-                }
-            }
-
         }
     }
 
@@ -99,25 +101,28 @@ public class Climbing : Ability
         //Uses the character controller to move the player vertically
         if (climbing)
         {
-            float vert = Input.GetAxis("Vertical");
-            Vector3 movDir = new Vector3(0, vert, 0);
-
-            if (Input.GetAxis("Horizontal") > 0)
+            if (turtCont.currentlyActive)
             {
-                movDir += wall.forward;
+                float vert = Input.GetAxis("Vertical");
+                Vector3 movDir = new Vector3(0, vert, 0);
+
+                if (Input.GetAxis("Horizontal") > 0)
+                {
+                    movDir -= wall.forward;
+                }
+                else if (Input.GetAxis("Horizontal") < 0)
+                {
+                    movDir += wall.forward;
+                }
+
+
+                float magnitude = Mathf.Clamp01(movDir.magnitude) * climbSpeed;
+                movDir.Normalize();
+
+                charCont.Move(movDir * magnitude);
+
+                //You'd do animations here, or above the controller
             }
-            else if (Input.GetAxis("Horizontal") < 0)
-            {
-                movDir -= wall.forward;
-            }
-
-            
-            float magnitude = Mathf.Clamp01(movDir.magnitude) * climbSpeed;
-            movDir.Normalize();
-
-            charCont.Move(movDir * magnitude);
-
-            //You'd do animations here, or above the controller
         }
     }
 

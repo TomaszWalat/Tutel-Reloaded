@@ -20,12 +20,12 @@ public class TurtleManager : MonoBehaviour
         foreach(Transform child in transform)
         {
             currentTurtle = child; //we do not know if this is a player yet.
-            if(child.GetComponent<TurtleController>())
+            if(child.GetComponent<TurtleController>() != null)
             {
                 Debug.Log("found a turtle");
                 turtles.Add(child);
                 turtleCount++;
-                if (child.GetComponent<Ability>() != null)
+                if (child.GetComponentInChildren(typeof(Ability)) != null)
                 {
                     Debug.Log("found ability" + child.GetComponent<Ability>());
                     DisablePlayer(child);

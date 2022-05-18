@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-[RequireComponent(typeof(Rigidbody))]
+//[RequireComponent(typeof(Rigidbody))]
 public class Swimming : Ability
 {
     [SerializeField]
@@ -20,14 +20,13 @@ public class Swimming : Ability
     private float airDrag = 0f;
     [SerializeField]
     private float airAngularDrag = 0.05f;
-
-
+    
     private Rigidbody m_rigidbody;
 
     // Start is called before the first frame update
     void Start()
     {
-        m_rigidbody = GetComponent<Rigidbody>();
+        m_rigidbody = GetComponentInParent<Rigidbody>();
     }
 
     // Update is called once per frame

@@ -6,7 +6,7 @@ public class GoalObjectScript : MonoBehaviour
 {
     [SerializeField]
     [Tooltip("Fill in only if this a child of another goal (part of a daisy chain) - i.e. leave empty for Level Manager")]
-    // Parent of this goal, null is this is the higest level parent
+    // Parent of this goal, null is this is the highest level parent
     protected GoalObjectScript parent;
 
     [SerializeField]

@@ -6,9 +6,9 @@ using UnityEditor;
 public class CarryBlock : Ability
 {
     //This is my push script but modified to pick up instead.
-    //Grab range is how far the ray cast detects anything || The rayOffset ofsets the ray from the player's centre || The height offset controls how high the block is held above the character || Collision stores where the hit was for the debug gizmo
+    //Grab range is how far the ray cast detects anything || The rayOffset offsets the ray from the player's centre || The height offset controls how high the block is held above the character || Collision stores where the hit was for the debug gizmo
     [Header("Grab detection")]
-    public float grabRange = 2f;
+    public float grabRange = 1.0f;
     public Vector3 rayOffset = new Vector3(0f, -0.5f, 0f);
     Vector3 grabPoint = Vector3.zero;
 
@@ -18,7 +18,7 @@ public class CarryBlock : Ability
 
     [Header("Block control")]
     public float holdHeight = 1f;
-    public Vector3 dropHeightOffset = new Vector3(0f, -0.25f, 0);
+    public Vector3 dropHeightOffset = new Vector3(0f, 0.25f, 0);
     bool currentlyCarrying = false;
     string childName = "";
     Transform carryBlock;
@@ -36,8 +36,12 @@ public class CarryBlock : Ability
     {
         //Initialises the variables needed for the slow down
         movementScript = transform.parent.GetComponent<TurtleController>();
-        startingSpeed = movementScript.speed;
-        startingRotSpeed = movementScript.rotSpeed;
+
+        if (movementScript != null)
+        {
+            startingSpeed = movementScript.speed;
+            startingRotSpeed = movementScript.rotSpeed;
+        }
         carryLayer = LayerMask.NameToLayer("carryLayer");
     }
 
@@ -47,60 +51,65 @@ public class CarryBlock : Ability
         //Checks if the action button from the input manager is hit (Default should be E or A on a controller) then checks if they're already holding something
         if (Input.GetButtonDown("action button"))
         {
-            //Casts a ray to see if something is hit,
-            var ray = new Ray(transform.position + rayOffset, transform.forward);
-            RaycastHit hit;
-            if (Physics.Raycast(ray, out hit,  grabRange, carryLayer))
+            if (movementScript.currentlyActive)
             {
-                //Moves the green gizmo sphere to where the raycast hit
-                grabPoint = hit.point;
-
-                //Checks if player is carrying anythign then if the block hit has the correct tag
-                if (currentlyCarrying == false)
+                //Casts a ray to see if something is hit,
+                var ray = new Ray(transform.position + rayOffset, transform.forward);
+                RaycastHit hit;
+                if (Physics.Raycast(ray, out hit, grabRange, carryLayer))
                 {
-                    childName = hit.transform.gameObject.name;
-                    Debug.Log(childName);
-                    //PUT ANIMATION HERE
+                    //Moves the green gizmo sphere to where the raycast hit
+                    grabPoint = hit.point;
 
-                    //Parents the block to the player then puts it above their head, it also makes sure they're rotated the right way as well as storing their hirearchy name for later
-                    currentlyCarrying = true;
-                    hit.transform.position = transform.position + new Vector3(0, holdHeight, 0);
-                    hit.transform.rotation = transform.rotation;
-                    carryBlock = hit.transform;
+                    //Checks if player is carrying anything then if the block hit has the correct tag
+                    if (!currentlyCarrying && hit.transform.gameObject.tag == "carryBlock")
+                    {
+                        childName = hit.transform.gameObject.name;
+                        Debug.Log(childName);
+                        //PUT ANIMATION HERE
 
-                    changePlayerSpeed();
+                        //Parents the block to the player then puts it above their head, it also makes sure they're rotated the right way as well as storing their hirearchy name for later
+                        currentlyCarrying = true;
+                        hit.transform.position = transform.position + new Vector3(0, holdHeight, 0);
+                        hit.transform.rotation = transform.rotation;
+                        carryBlock = hit.transform;
+
+                        changePlayerSpeed();
+                    }
+                    else
+                    {
+                        //PUT NOPE SFX HERE
+                        Debug.Log("Drop site is obscured || Raycast");
+                    }
                 }
-                else
+                //The raycast hit nothing so now it runs a box cast to check if the area in front is clear to drop the block. The area is the same size as the carry block
+                else if (currentlyCarrying)
                 {
-                    //PUT NOPE SFX HERE
-                    Debug.Log("Drop site is obscured || Raycast");
-                }
-            }
-            //The raycast hit nothing so now it runs a box cast to check if the area in front is clear to drop the block. The area is the same size as the carry block
-            else if(currentlyCarrying == true)
-            {
-                RaycastHit radiusHit;
-                if (Physics.BoxCast(transform.position, checkBoxSize, transform.forward, out radiusHit, transform.rotation, grabRange))
-                {
-                    //PUT NOPE SFX HERE
-                    //Draws the gizmo where the box ray was cast
-                    Debug.Log("Drop site is obscured || Boxcast");
-                    dropPoint = radiusHit.point;
-                }
-                else
-                {
-                    //Draws the gizmo in front of the player
-                    Debug.Log("Clear to drop");
-                    dropPoint = transform.parent.position + (transform.forward + dropHeightOffset);
+                    RaycastHit radiusHit;
+                    if (Physics.BoxCast(transform.position, checkBoxSize, transform.forward, out radiusHit,
+                            transform.rotation, grabRange))
+                    {
+                        //PUT NOPE SFX HERE
+                        //Draws the gizmo where the box ray was cast
+                        Debug.Log("Drop site is obscured || Boxcast");
+                        dropPoint = radiusHit.point;
+                    }
+                    else
+                    {
+                        //Draws the gizmo in front of the player
+                        Debug.Log("Clear to drop");
+                        dropPoint = transform.parent.position + (transform.forward + dropHeightOffset);
 
-                    //PUT ANIMATION HERE
+                        //PUT ANIMATION HERE
 
-                    //Places carry block in front of the player with a height offset & resets the currentlyCarrying bool & carryblock variable.
-                    currentlyCarrying = false;
-                    carryBlock.transform.position = transform.parent.position + (transform.forward + dropHeightOffset);
-                    carryBlock = null;
+                        //Places carry block in front of the player with a height offset & resets the currentlyCarrying bool & carryblock variable.
+                        currentlyCarrying = false;
+                        carryBlock.transform.position =
+                            transform.parent.position + (transform.forward + dropHeightOffset);
+                        carryBlock = null;
 
-                    changePlayerSpeed();
+                        changePlayerSpeed();
+                    }
                 }
             }
         }
@@ -145,7 +154,7 @@ public class CarryBlock : Ability
         Gizmos.DrawWireSphere(grabPoint, 0.2f);
 
         Gizmos.color = Color.blue;
-        Gizmos.DrawWireCube(dropPoint, checkBoxSize);
+        Gizmos.DrawWireCube(dropPoint, checkBoxSize * 2);
 
     }
 
