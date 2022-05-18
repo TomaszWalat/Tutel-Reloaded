@@ -4,8 +4,8 @@ Developed by Team Tutel©
 
 ## Members
 * Tomasz Walat
-* Athanasios Sgouros
-* Stefan Candea
+* ~~Athanasios Sgouros~~ - no longer part of the team
+* ~~Stefan Candea~~ - no longer part of the team
 * Zachary Cummings
 * ~~Thomas O'Toole~~ - left due to personal circumstances
 
