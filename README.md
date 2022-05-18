@@ -4,9 +4,9 @@ Developed by Team Tutel©
 
 ## Members
 * Tomasz Walat
+* Zachary Cummings
 * ~~Athanasios Sgouros~~ - no longer part of the team
 * ~~Stefan Candea~~ - no longer part of the team
-* Zachary Cummings
 * ~~Thomas O'Toole~~ - left due to personal circumstances
 
 ## Project Vison
